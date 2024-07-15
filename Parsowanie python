@@ -1,0 +1,37 @@
+import argparse
+import re
+
+def validate_age(value):
+    try:
+        ivalue = int(value)
+        if ivalue < 0:
+            raise argparse.ArgumentTypeError("Nie wynaleziono cofania w czasie, wiek musi być oddatny")
+        return ivalue
+    except ValueError:
+        raise argparse.ArgumentTypeError("Wiek niecałkowity? Ciekawe, leczm musi on być całkowity w tym programie")
+
+def validate_name(value):
+    if not re.match("^[A-Za-z]+$", value):
+        raise argparse.ArgumentTypeError("Nikt nie posiada cyfry w imieniu. Podaj imię bez cyfry")
+    return value
+
+def main():
+    parser = argparse.ArgumentParser(description="Przykład parsowania")
+    parser.add_argument('-n', '--name', type=validate_name, required=True, help='Twoje imię')
+    parser.add_argument('-a', '--age', type=validate_age, required=True, help='Twój wiek')
+    parser.add_argument('-v', '--verbose', action='store_true', help='Tryb szczegółowy')
+
+    try:
+        args = parser.parse_args()
+
+        print(f"Cześć, {args.name}!")
+        print(f"Masz {args.age} lat.")
+        if args.verbose:
+            print("Włączony został tryb szczegółowy.")
+    except argparse.ArgumentError as e:
+        print(f"Błąd argumentu: {e}")
+    except Exception as e:
+        print(f"Wystąpił nieoczekiwany błąd: {e}")
+
+if __name__ == "__main__":
+    main()
